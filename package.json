@@ -1,5 +1,24 @@
 {
   "dependencies": {
+    "discord.js": "^12.5.3",
     "nodejs": "^0.0.0"
-  }
+  },
+  "name": "wikr",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "run": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethanejohnsons/Wikr.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ethanejohnsons/Wikr/issues"
+  },
+  "homepage": "https://github.com/ethanejohnsons/Wikr#readme"
 }
