@@ -20,20 +20,24 @@ client.login(tokens.discord);
 
 // On any message received
 client.on('message', message => {
-    if (!(message.content.startsWith(commandPrefix) || message.content.startsWith(searchPrefix)) || message.author.bot) return;
+    if (message.author.bot) return;
 
-    const prefix = message.content.startsWith(commandPrefix) ? commandPrefix : searchPrefix;
-    const args = message.content.slice(prefix.length).trim().split(/ +/);
-	const command = args.shift().toLowerCase();
+    if (message.content.startsWith(commandPrefix) && !message.content.startsWith(searchPrefix)) {
+        const args = message.content.slice(commandPrefix.length).trim().split(/ +/);
+        const command = args.shift().toLowerCase();
 
-    if (client.commands.has(command)) {
-        try {
-            client.commands.get(command).execute(message, args);
-        } catch (error) {
-            console.error(error);
-            message.reply('There was a problem executing that command.');
+        if (client.commands.has(command)) {
+            try {
+                client.commands.get(command).execute(message, args);
+            } catch (error) {
+                console.error(error);
+                message.reply('There was a problem executing that command.');
+            }
         }
-    } else if (prefix === searchPrefix) {
+    } else if (message.content.startsWith(searchPrefix)) {
+        const args = message.content.slice(commandPrefix.length).trim().split(/ +/);
+        const word = args.shift().toLowerCase();
+
         try {
             var endpoint = api + 'spaces/-MM4d7zIxwc3cvyIMnBY/content';
             var bearer = 'Bearer ' + tokens.gitbook;

@@ -2,7 +2,7 @@ module.exports = {
     name: 'spaces',
     description: 'Lists all spaces for this server.',
     execute(message, args) {
-        const { url, name } = require('../database.json');
+        const { url, name } = require('../config/database.json');
         const MongoClient = require('mongodb').MongoClient;
         //const client = new MongoClient(connection);
 
