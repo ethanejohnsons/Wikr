@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "discord.js": "^12.5.3",
+    "mongodb": "^3.6.9",
+    "node-fetch": "^2.6.1",
     "nodejs": "^0.0.0"
   },
   "name": "wikr",
@@ -9,7 +11,7 @@
   "main": "index.js",
   "devDependencies": {},
   "scripts": {
-    "run": "node index.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

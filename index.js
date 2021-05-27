@@ -1,37 +1,56 @@
 const fs = require('fs');
+const assert = require('assert');
+const fetch = require('node-fetch');
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
+const { api, commandPrefix, searchPrefix } = require('./config/config.json');
+const tokens = require('./config/tokens.json');
 
 // Initialize the client
 const client = new Discord.Client();
 
 // Gather up the commands
 client.commands = new Discord.Collection();
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-for (const file of commandFiles) {
+for (const file of fs.readdirSync('./commands').filter(file => file.endsWith('.js'))) {
 	const command = require(`./commands/${file}`);
-	// set a new item in the Collection
-	// with the key as the command name and the value as the exported module
 	client.commands.set(command.name, command);
 }
 
 // Login to Discord
-client.login(token);
+client.login(tokens.discord);
 
 // On any message received
 client.on('message', message => {
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
+    if (!(message.content.startsWith(commandPrefix) || message.content.startsWith(searchPrefix)) || message.author.bot) return;
 
+    const prefix = message.content.startsWith(commandPrefix) ? commandPrefix : searchPrefix;
     const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
 
-    if (!client.commands.has(command)) return;
+    if (client.commands.has(command)) {
+        try {
+            client.commands.get(command).execute(message, args);
+        } catch (error) {
+            console.error(error);
+            message.reply('There was a problem executing that command.');
+        }
+    } else if (prefix === searchPrefix) {
+        try {
+            var endpoint = api + 'spaces/-MM4d7zIxwc3cvyIMnBY/content';
+            var bearer = 'Bearer ' + tokens.gitbook;
 
-    try {
-        client.commands.get(command).execute(message, args);
-    } catch (error) {
-        console.error(error);
-        message.reply('There was a problem executing that command.');
+            fetch(endpoint, {
+                method: 'GET',
+                withCredentials: true,
+                credentials: 'include',
+                headers: {
+                    'Authorization': bearer,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(json => console.log(json));
+        } catch (error) {
+            console.error(error);
+        }
     }
 });

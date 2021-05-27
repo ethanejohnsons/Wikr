@@ -1,0 +1,5 @@
+{
+	"commandPrefix": "?",
+	"searchPrefix": "??",
+	"api": "https://api-beta.gitbook.com/v1/"
+}
