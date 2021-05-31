@@ -1,9 +1,8 @@
 const fs = require('fs');
-const assert = require('assert');
-const fetch = require('node-fetch');
 const Discord = require('discord.js');
-const { api, commandPrefix, searchPrefix } = require('./config/config.json');
+const { commandPrefix, searchPrefix } = require('./config/config.json');
 const tokens = require('./config/tokens.json');
+const gitbook = require('./gitbook.js');
 
 // Initialize the client
 const client = new Discord.Client();
@@ -24,11 +23,17 @@ client.on('message', message => {
 
     if (message.content.startsWith(commandPrefix) && !message.content.startsWith(searchPrefix)) {
         const args = message.content.slice(commandPrefix.length).trim().split(/ +/);
-        const command = args.shift().toLowerCase();
+        const commandName = args.shift().toLowerCase();
 
-        if (client.commands.has(command)) {
+        if (client.commands.has(commandName)) {
+            let command = client.commands.get(commandName);
+
+            if (command.usage && !args.length) {
+                return command.channel.send("Missing required args: " + command.usage);
+            }
+
             try {
-                client.commands.get(command).execute(message, args);
+                command.execute(message, args);
             } catch (error) {
                 console.error(error);
                 message.reply('There was a problem executing that command.');
@@ -39,20 +44,9 @@ client.on('message', message => {
         const word = args.shift().toLowerCase();
 
         try {
-            var endpoint = api + 'spaces/-MM4d7zIxwc3cvyIMnBY/content';
-            var bearer = 'Bearer ' + tokens.gitbook;
-
-            fetch(endpoint, {
-                method: 'GET',
-                withCredentials: true,
-                credentials: 'include',
-                headers: {
-                    'Authorization': bearer,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(res => res.json())
-            .then(json => console.log(json));
+            gitbook.fetch('user/')
+                .then(res => res.json())
+                .then(json => console.log(json));
         } catch (error) {
             console.error(error);
         }

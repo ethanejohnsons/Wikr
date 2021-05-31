@@ -2,17 +2,12 @@ module.exports = {
     name: 'spaces',
     description: 'Lists all spaces for this server.',
     execute(message, args) {
-        const { url, name } = require('../config/database.json');
-        const MongoClient = require('mongodb').MongoClient;
-        //const client = new MongoClient(connection);
-
-        /*MongoClient.connect(url, function(err, client) {
-            assert.equal(null, err);
-            const db = client.db(name);
-            
-        });*/
+        const mongo = require('../mongo.js');
+        let results = await mongo.find({});
         
-        // hard coding go brr
-        message.channel.send('Lazurite');
+        // Send a message with the name of each space.
+        results.forEach(function(result) {
+            message.channel.send(result.title);
+        });
     }
 };
